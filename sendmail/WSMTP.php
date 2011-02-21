@@ -5,7 +5,9 @@
  * @author Michal Lupatus Kluszewski <lupatus@gmail.com>
  * @link http://yii.lupatus.com/wmailer
  * @copyright Copyright &copy; 2011 Lupatus.com
- * @license http://yii.lupatus.com/license/
+ * @license http://yii.lupatus.com/wmailer/license/
+ * @package WolfLibs4Yii
+ * @subpackage WMailer
  */
 
 /**
@@ -163,9 +165,17 @@ class WSMTP extends WSendMailAbstract {
      *
      * @throws WSMTPError
      */
-    public function check() {
-        $this->_connect();
-        $this->_disconnect();
+    public function check($throw = false) {
+        try {
+            $this->_connect();
+            $this->_disconnect();
+        } catch (WSMTPError $e) {
+            if ($throw) {
+                throw $e;
+            }
+            return false;
+        }
+        return true;
     }
     
     /**
@@ -173,9 +183,14 @@ class WSMTP extends WSendMailAbstract {
      *
      * @param WMailBuilder $message email message
      *
+     * @return bool
+     *
      * @throws WSMTPError
      */
     public function send(WMailBuilder $message) {
+        if (!is_string($message->from) || !preg_match('/^[^@]+@[^@]+$/', $message->from)) {
+            throw new WSMTPError('From address is required for sending messages via SMTP.');
+        }
         $this->_connect();
         $this->_writeCheck('MAIL FROM: <' . $message->from . '>');
         $undisclosed = true;
@@ -204,6 +219,7 @@ class WSMTP extends WSendMailAbstract {
         $this->_write('.' . $message->data);
         $this->_writeCheck('.');
         $this->_disconnect();
+        return true;
     }
     
     

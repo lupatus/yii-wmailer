@@ -5,7 +5,9 @@
  * @author Michal Lupatus Kluszewski <lupatus@gmail.com>
  * @link http://yii.lupatus.com/wmailer
  * @copyright Copyright &copy; 2011 Lupatus.com
- * @license http://yii.lupatus.com/license/
+ * @license http://yii.lupatus.com/wmailer/license/
+ * @package WolfLibs4Yii
+ * @subpackage WMailer
  */
 
 /**
@@ -27,7 +29,7 @@ abstract class WSendMailAbstract extends CComponent implements WSendMailIface {
      *
      * @throws WSendMailError
      */
-    public function check() {
+    public function check($throw = false) {
         return true;
     }
     

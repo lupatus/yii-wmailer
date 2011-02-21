@@ -5,7 +5,9 @@
  * @author Michal Lupatus Kluszewski <lupatus@gmail.com>
  * @link http://yii.lupatus.com/wmailer
  * @copyright Copyright &copy; 2011 Lupatus.com
- * @license http://yii.lupatus.com/license/
+ * @license http://yii.lupatus.com/wmailer/license/
+ * @package WolfLibs4Yii
+ * @subpackage WMailer
  */
 
 /**
@@ -67,10 +69,13 @@ class WMailPartText extends WMailPart {
      * @param string $view Template path (@see CControler::getViewFile())
      * @param array $params Template variables
      */
-    public function render($_view_name, $_params = array()) {
-        $_viewFile_ = Yii::app()->controller->getViewFile($_view_name);
-        if (is_array($_params)) {
-            extract($_params);
+    public function render($_viewName_, $_params_ = array()) {
+        $_viewFile_ = Yii::app()->controller->getViewFile($_viewName_);
+        if (!$_viewFile_) {
+            throw new WMailError('Failed to find email template: ' . $_viewName_);
+        }
+        if (is_array($_params_)) {
+            extract($_params_, EXTR_PREFIX_SAME, 'data');
         }
         ob_start();
         require($_viewFile_);

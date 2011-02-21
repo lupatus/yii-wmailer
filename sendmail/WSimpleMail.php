@@ -5,7 +5,9 @@
  * @author Michal Lupatus Kluszewski <lupatus@gmail.com>
  * @link http://yii.lupatus.com/wmailer
  * @copyright Copyright &copy; 2011 Lupatus.com
- * @license http://yii.lupatus.com/license/
+ * @license http://yii.lupatus.com/wmailer/license/
+ * @package WolfLibs4Yii
+ * @subpackage WMailer
  */
 
 /**
@@ -58,6 +60,7 @@ class WSimpleMail extends WSendMailAbstract {
         if (!$r) {
             throw new WSendMailError('Sending email via ' . $f . '() function failed.');
         }
+        return $r;
     }
     
     
