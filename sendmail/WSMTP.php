@@ -66,6 +66,11 @@ class WSMTP extends WSendMailAbstract {
     public $timeout  = 5;
     
     /**
+     * $var string $emailFrom Default from email
+     */
+    public $emailFrom = null;
+    
+    /**
      * $var string $endline line ending string
      */
     public $endline  = self::CRLF;
@@ -188,6 +193,9 @@ class WSMTP extends WSendMailAbstract {
      * @throws WSMTPError
      */
     public function send(WMailBuilder $message) {
+        if (!$message->from && $this->emailFrom) {
+            $message->from = $this->emailFrom;
+        }
         if (!is_string($message->from) || !preg_match('/^[^@]+@[^@]+$/', $message->from)) {
             throw new WSMTPError('From address is required for sending messages via SMTP.');
         }

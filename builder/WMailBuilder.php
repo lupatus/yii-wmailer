@@ -102,7 +102,7 @@ class WMailBuilder extends WMailBase {
      *
      * @return string|string[]
      */
-    protected function _parseAddress($address) {
+    protected function _parseAddress($address, $full = false) {
         if (is_string($address) && false !== strpos($address, ',')) {
             $address = explode(',', $address);
         }
@@ -116,8 +116,16 @@ class WMailBuilder extends WMailBase {
             }
             return $tmp;
         }
-        if (is_string($address) && preg_match('/([a-z0-9_\.\-]+@[a-z0-9_\.\-]+)/i', $address, $m)) {
-            return $m[1];
+        if (is_string($address)) {
+            if ($full) {
+                if (preg_match('/(.*)\<([a-z0-9_\.\-]+@[a-z0-9_\.\-]+)\>/i', $address, $m)) {
+                    return array(trim($m[1]), $m[2]);
+                } else if (preg_match('/([a-z0-9_\.\-]+@[a-z0-9_\.\-]+)/i', $address, $m)) {
+                    return array('', $m[1]);
+                }
+            } else if (preg_match('/([a-z0-9_\.\-]+@[a-z0-9_\.\-]+)/i', $address, $m)) {
+                return $m[1];
+            }
         }
         return null;
     }
@@ -160,7 +168,15 @@ class WMailBuilder extends WMailBase {
      * @param string $from From address
      */
     public function setFrom($from) {
-        $this->_from = array_shift(($f = $this->_setRecipients('From', $from)));
+        list($name, $address) = $this->_parseAddress($from, true);
+        if ($address) {
+            $this->_from = $address;
+            if ($name) {
+                $address = $this->_encodeHeader($name) . ' <' . $address . '>';
+            }
+            $this->addHeader('From', $address);
+        }
+        //$this->_from = array_shift(($f = $this->_setRecipients('From', $from)));
     }
     
     /**
